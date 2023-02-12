@@ -22,3 +22,12 @@ export async function create (req, res) {
         res.status(500).send(err.message);
     }
 }
+
+export async function findAll (req, res) {
+    try {
+        const {rows} = await db.query("SELECT * FROM customers");
+        res.send(rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
