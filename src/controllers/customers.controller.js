@@ -31,3 +31,27 @@ export async function findAll (req, res) {
         res.status(500).send(err.message);
     }
 }
+
+export async function findById (req, res) {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.sendStatus(404)
+    }
+
+    try {
+        const {rows} = await db.query(
+            `
+            SELECT
+                *
+            FROM
+                customers
+            WHERE
+                id=$1
+            `, [id]
+        );
+        res.send(rows);
+    } catch(err) {
+        res.status(500).send(err.message)
+    }
+}
