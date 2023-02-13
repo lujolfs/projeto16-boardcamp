@@ -125,7 +125,10 @@ export async function deleteRent (req, res) {
         SELECT * FROM rentals WHERE id=$1;`, [id])
             if (!findRental.rows[0]) {
         return res.sendStatus(404);
-            } else {
+        } else if (findRental.rows[0].returnDate === null) {
+            return res.sendStatus(400);
+        } 
+        else {
         await db.query(
             `DELETE FROM rentals WHERE id=$1`, [id]
         );
