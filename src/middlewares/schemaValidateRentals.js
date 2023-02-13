@@ -1,7 +1,15 @@
 import {db} from "../database/database.js";
+import { rentalSchema } from "../modules/rentalsSchema.js";
 
 export async function schemaValidateRentedGame (req, res, next) {
     const rented = req.body;
+
+    const {error} = rentalSchema.validate(rented, {abortEarly: false});
+
+    if (error) {
+        const errors = error.details.map((detail) => detail.message);
+        return res.status(400).send(errors);
+    }
 
     try {
         const rentedGame = await db.query(
