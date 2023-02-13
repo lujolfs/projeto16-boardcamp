@@ -1,7 +1,7 @@
 import {db} from "../database/database.js";
 
 export async function create (req, res) {
-    const {name, phone, cpf, birthday} = req.body;
+    const {name, phone, cpf, birthday} = req.customerObject;
 
     try {
         await db.query(
