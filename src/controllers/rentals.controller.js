@@ -81,10 +81,24 @@ export async function finish (req, res) {
         const findRental = await db.query (`
             SELECT * FROM rentals WHERE id=$1;`, [id]
         )
+        const date1 = dayjs(findRental.rows[0].rentDate)
         if (!findRental.rows[0]) {
             return res.sendStatus(404);
         } else if (findRental.rows[0].returnDate !== null) {
             return res.sendStatus(400);
+        } else if (date1.diff(returnDate, day) > findRental.rows[0].daysRented) { 
+        await db.query(
+            `UPDATE
+                rentals
+            SET
+                "returnDate"=$1, "delayFree"=$2 WHERE id=$3;`,
+            [returnDate, id]
+            );
+            const findGame = await db.query(`SELECT * FROM games WHERE id=$1`, [findRental.rows[0].gameId])
+            await db.query(`
+            UPDATE games SET "stockTotal"=$1 WHERE id=$2`, [((findGame.rows[0].stockTotal)+1),findRental.rows[0].gameId]
+            );
+            res.sendStatus(200);
         } else {
         await db.query(
             `UPDATE
@@ -105,12 +119,17 @@ export async function finish (req, res) {
 
 export async function deleteRent (req, res) {
     const {id} = req.params;
-
+    
     try {
+        const findRental = await db.query (`
+        SELECT * FROM rentals WHERE id=$1;`, [id])
+            if (!findRental.rows[0]) {
+        return res.sendStatus(404);
+            } else {
         await db.query(
             `DELETE FROM rentals WHERE id=$1`, [id]
         );
-        res.sendStatus(200);
+        res.sendStatus(200);}
     } catch (err) {
         res.status(500).send(err.message);
     }
