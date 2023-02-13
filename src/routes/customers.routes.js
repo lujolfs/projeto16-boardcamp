@@ -5,5 +5,7 @@ const customersRouter = Router();
 
 customersRouter.post("/customers", create);
 customersRouter.get("/customers", findAll);
+customersRouter.get("/customers/:id", findById);
+customersRouter.get("/customers/:id", update);
 
 export default customersRouter;
