@@ -86,7 +86,7 @@ export async function finish (req, res) {
             return res.sendStatus(404);
         } else if (findRental.rows[0].returnDate !== null) {
             return res.sendStatus(400);
-        } else if (date1.diff(returnDate, day) > findRental.rows[0].daysRented) { 
+        } else if (date1.diff(returnDate, 'day') > findRental.rows[0].daysRented) { 
         await db.query(
             `UPDATE
                 rentals

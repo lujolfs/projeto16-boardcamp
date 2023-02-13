@@ -46,11 +46,7 @@ export async function schemaValidateCustomerUpdate (req, res, next) {
 
     try {
         const {rows} = await db.query(`
-        SELECT COUNT
-            (*)
-        FROM
-            customers
-        WHERE
+        SELECT COUNT (*) FROM customers WHERE
             cpf=$1;`, [customer.cpf]);
         if (rows[0].count !== "0") {
             const searchResult = await matchSearch;
@@ -60,13 +56,12 @@ export async function schemaValidateCustomerUpdate (req, res, next) {
                     return res.sendStatus(200)
                 } else {
                     return res.sendStatus(409)
-                }}
-        else {
+                }
+            } else {
             await idMatch;
             return res.sendStatus(200);
-        }
-        } catch (error) {
-        return res.sendStatus(401);
+        }} catch (error) {
+        res.sendStatus(401);
     }
 
     req.customerObject = customer;
