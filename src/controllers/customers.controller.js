@@ -36,7 +36,7 @@ export async function findById (req, res) {
     }
 
     try {
-        const {rows} = await db.query(
+        const {rows, rowCount} = await db.query(
             `
             SELECT
                 *
@@ -46,7 +46,12 @@ export async function findById (req, res) {
                 id=$1;
             `, [id]
         );
-        res.send(rows);
+        
+        if (rowCount === 0) {
+            res.sendStatus(404)
+        } else {
+        res.send(rows[0]);
+        }
     } catch(err) {
         res.status(500).send(err.message)
     }
