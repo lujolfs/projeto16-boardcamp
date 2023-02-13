@@ -78,6 +78,12 @@ export async function finish (req, res) {
     const returnDate = dayjs().format('YYYY-MM-DD')
 
     try {
+        const findRental = await db.query (`
+            SELECT * FROM rentals WHERE id=$1;`, [id]
+        )
+        if (!findRental.rows[0]) {
+            return res.sendStatus(404);
+        } else {
         await db.query(
             `UPDATE
                 rentals
@@ -85,8 +91,12 @@ export async function finish (req, res) {
                 "returnDate"=$1 WHERE id=$2;`,
             [returnDate, id]
         );
+        const findGame = await db.query(`SELECT * FROM games WHERE id=$1`, [findRental.rows[0].gameId])
+        await db.query(`
+        UPDATE games SET "stockTotal"=$1 WHERE id=$2`, [((findGame.rows[0].stockTotal)+1),findRental.rows[0].gameId]
+        );
         res.sendStatus(200);
-    } catch (err) {
+    }} catch (err) {
         res.status(500).send(err.message);
     }
 }
