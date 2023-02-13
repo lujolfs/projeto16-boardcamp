@@ -2,7 +2,7 @@ import {db} from "..//database/database.js";
 import dayjs from "dayjs"
 
 export async function create (req, res) {
-    const { customerId, gameId, daysRented } = req.body;
+    const { customerId, gameId, daysRented } = req.rentedObject;
     const rentDate = dayjs().format('YYYY-MM-DD')
     let pricePerDay
     
@@ -15,10 +15,10 @@ export async function create (req, res) {
             `SELECT * FROM games WHERE id=$1;`,
             [gameId]
         );
-        pricePerDay = rows[0].pricePerDay
-    }
-
-    catch(err) {
+        pricePerDay = rows[0].pricePerDay;
+        await db.query(`
+        UPDATE games SET "stockTotal"=$1 WHERE id=$2`, [((rows[0].stockTotal)-1),gameId]);
+    } catch(err) {
         res.status(500).send(err.message);
     }
 

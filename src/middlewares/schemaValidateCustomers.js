@@ -53,14 +53,17 @@ export async function schemaValidateCustomerUpdate (req, res, next) {
         WHERE
             cpf=$1;`, [customer.cpf]);
         if (rows[0].count !== "0") {
-            await matchSearch;
-            if (rows[0].id = id) {
-                await idMatch
-            } else {
-                return res.sendStatus(409)
-            }}
+            const searchResult = await matchSearch;
+            res.send(searchResult.rows[0])
+                if (rows[0].id == id) {
+                    await idMatch
+                    return res.sendStatus(200)
+                } else {
+                    return res.sendStatus(409)
+                }}
         else {
-            return res.sendStatus(409)
+            await idMatch;
+            return res.sendStatus(200);
         }
         } catch (error) {
         return res.sendStatus(401);
