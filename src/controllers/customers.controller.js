@@ -43,7 +43,7 @@ export async function findById (req, res) {
             FROM
                 customers
             WHERE
-                id=$1
+                id=$1;
             `, [id]
         );
         res.send(rows);

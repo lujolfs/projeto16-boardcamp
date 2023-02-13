@@ -1,11 +1,7 @@
 import {db} from "../database/database.js";
 
 export async function create (req, res) {
-    const {name, image, stockTotal, pricePerDay} = req.body;
-
-    if (!name || stockTotal < 0 || pricePerDay < 0) {
-        return res.sendStatus(400)
-    }
+    const {name, image, stockTotal, pricePerDay} = req.gameObject;
 
     try {
         await db.query(
@@ -25,7 +21,7 @@ export async function create (req, res) {
 
 export async function findAll (req, res) {
     try {
-        const { rows } = await db.query(`
+        const {rows} = await db.query(`
         SELECT
             *
         FROM
@@ -34,5 +30,21 @@ export async function findAll (req, res) {
         res.send(rows);
     } catch (err) {
         res.status(500).send(err.message);
+    }
+}
+
+export async function queryTest (req, res) {
+    const {name} = req.body;
+    try {
+        const {rows} = await db.query(`
+        SELECT COUNT
+            (*)
+        FROM
+            games
+        WHERE
+            name=$1;`, [name]);
+        res.send(rows[0].count);
+    } catch(err) {
+        res.status(500).send(err.message)
     }
 }

@@ -12,12 +12,21 @@ export async function schemaValidateGame (req, res, next) {
     }
 
     try {
-        const nameExists = await db.query(`
-        SELECT
-            *
+        const {rows} = await db.query(`
+        SELECT COUNT
+            (*)
         FROM
             games
         WHERE
-            `)
+            name=$1;`, [game.name]);
+        if (rows[0].count !== "0") {
+            return res.sendStatus(409)
+        }
+    } catch (error) {
+        return res.sendStatus(401);
     }
+
+    req.gameObject = game;
+    next();
+    return;
 }
