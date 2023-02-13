@@ -85,8 +85,7 @@ export async function finish (req, res) {
             return res.sendStatus(404);
         } else if (findRental.rows[0].returnDate !== null) {
             return res.sendStatus(400);
-        }
-        {
+        } else {
         await db.query(
             `UPDATE
                 rentals
